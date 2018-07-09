@@ -1,0 +1,62 @@
+<html>
+  <body>
+    <form>
+      <h1>How much loan given payment</h1>
+      <table>
+        <tr><td>Monthly Payment</td><td><input type="text" id="monthlyPayment" value="2000"></td></tr>
+        <tr><td>Interest Per Year</td><td><input type="text" id="loanInterestPerYear" value="5"></td></tr>
+        <tr><td>Loan Term Years</td><td><input type="text" id="loanTermYears" value="30"></td></tr>
+        <tr><td>Percent Down</td><td><input type="text" id="percentDown" value="5"></td></tr>
+        <tr><td>Total Down</td><td><input type="text" id="totalDown" value="400000"></td></tr>
+        <tr><td>Property Tax Rate</td><td><input type="text" id="taxRate" value="1.2"></td></tr>
+        <tr><td align="right" colspan="2">
+          <button type="button" onclick="houseByPaymentHtml('monthlyPayment', 'loanInterestPerYear', 'loanTermYears', 'percentDown', 'totalDown', 'taxRate', 'downPaymentValue', 'loanValue', 'houseValue', 'taxValue');">Compute</button></td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>Total House</td><td><span id="houseValue"></span></td></tr>
+        <tr><td>Tax per Month</td><td><span id="taxValue"></span></td></tr>
+        <tr><td>Loan Value</td><td><span id="loanValue"></span></td></tr>
+        <tr><td>Down payment </td><td><span id="downPaymentValue"></span></td></tr>
+      </table>
+    </form>
+  </body>
+<script>
+  // Create our number formatter.
+  var formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    // the default value for minimumFractionDigits depends on the currency
+    // and is usually already 2
+  });
+
+  function houseByPaymentHtml(monthlyPaymentTag, interestRateTag, termYearsTag, downPaymentPercentTag, totalDownTag, taxRateTag, downpaymentTag, loanTag, totalTag, taxValueTag)
+  {
+    var monthlyPayment = 1.0 * document.getElementById(monthlyPaymentTag).value;
+    var interestRate = document.getElementById(interestRateTag).value / 100.0;
+    var termYears = 1.0 * document.getElementById(termYearsTag).value;
+    var taxRate = document.getElementById(taxRateTag).value / 100.0;
+    var totalDown = 1.0 * document.getElementById(totalDownTag).value;
+    var downPaymentPercent = document.getElementById(downPaymentPercentTag).value / 100.0;
+   
+    var rate = interestRate / 12.0;
+    var compounding = (1 - Math.pow(1 + rate, -(12 * termYears))) / rate;
+    var totalHouse = 0;
+
+    var totalHouse = (totalDown + (monthlyPayment * compounding)) / (1 + taxRate * compounding / 12);
+    if (totalDown < downPaymentPercent * totalHouse)
+    {
+      totalHouse = monthlyPayment * compounding / (1 + taxRate * compounding / 12 - downPaymentPercent);
+      totalDown = downPaymentPercent * totalHouse;
+    }
+
+    var loanAmount = totalHouse - totalDown;
+    var taxValue = taxRate * totalHouse;
+
+    document.getElementById(downpaymentTag).innerHTML = formatter.format(totalDown);
+    document.getElementById(loanTag).innerHTML = formatter.format(loanAmount);
+    document.getElementById(totalTag).innerHTML = formatter.format(totalHouse);
+    document.getElementById(taxValueTag).innerHTML = formatter.format(taxValue);
+  }
+</script>
+</html>
+
