@@ -3,11 +3,11 @@
     <form>
       <h1>How much loan given payment</h1>
       <table>
-        <tr><td>Monthly Payment</td><td><input type="text" id="monthlyPayment" value="2000"></td></tr>
+        <tr><td>Monthly Payment</td><td><input type="text" id="monthlyPayment" value="1800"></td></tr>
         <tr><td>Interest Per Year</td><td><input type="text" id="loanInterestPerYear" value="5"></td></tr>
         <tr><td>Loan Term Years</td><td><input type="text" id="loanTermYears" value="30"></td></tr>
         <tr><td>Percent Down</td><td><input type="text" id="percentDown" value="5"></td></tr>
-        <tr><td>Total Down</td><td><input type="text" id="totalDown" value="400000"></td></tr>
+        <tr><td>Total Down</td><td><input type="text" id="totalDown" value="0"></td></tr>
         <tr><td>Property Tax Rate</td><td><input type="text" id="taxRate" value="1.2"></td></tr>
         <tr><td align="right" colspan="2">
           <button type="button" onclick="houseByPaymentHtml('monthlyPayment', 'loanInterestPerYear', 'loanTermYears', 'percentDown', 'totalDown', 'taxRate', 'downPaymentValue', 'loanValue', 'houseValue', 'taxValue');">Compute</button></td></tr>
@@ -57,6 +57,20 @@
     document.getElementById(totalTag).innerHTML = formatter.format(totalHouse);
     document.getElementById(taxValueTag).innerHTML = formatter.format(taxValue);
   }
+
+  function annualPMI(loan, total, credit)
+  {
+     var ltv = loan / total;
+     if (ltv > 0.95) { if (credit > 760) return 0.0105; if (credit > 720) return 0.0110; if (credit > 680) return 0.0131; return 0.0148; } 
+     if (ltv > 0.90) { if (credit > 760) return 0.0054; if (credit > 720) return 0.0062; if (credit > 680) return 0.0089; return 0.00115; } 
+     if (ltv > 0.85) { if (credit > 760) return 0.0039; if (credit > 720) return 0.0044; if (credit > 680) return 0.0057; return 0.0071; } 
+     if (ltv > 0.80) { if (credit > 760) return 0.0023; if (credit > 720) return 0.0027; if (credit > 680) return 0.0033; return 0.0039; } 
+     return 0.0;
+  }
+
+  function annualHomeOwnersInsurance(total)
+  {
+     return 0.005 * total;
+  }
 </script>
 </html>
-
