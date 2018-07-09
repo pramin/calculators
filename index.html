@@ -18,9 +18,11 @@
         <tr><td>Interest Per Year</td><td><input type="text" id="loanInterestPerYear"></td></tr>
         <tr><td>Loan Term Years</td><td><input type="text" id="loanTermYears"></td></tr>
         <tr><td align="right" colspan="2">
-          <button type="button" onclick="loanByPaymentHtml('monthlyPayment', 'loanInterestPerYear', 'loanTermYears', 'loanValue');">Compute</button></td></tr>
+          <button type="button" onclick="houseByPaymentHtml('monthlyPayment', 'loanInterestPerYear', 'loanTermYears', 'downPaymentValue', 'loanValue', 'houseValue');">Compute</button></td></tr>
         <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
         <tr><td>Loan Value</td><td><span id="loanValue"></span></td></tr>
+        <tr><td>Down payment </td><td><span id="downPaymentValue"></span></td></tr>
+        <tr><td>Total House</td><td><span id="houseValue"></span></td></tr>
       </table>
     </form>
   </body>
@@ -40,6 +42,20 @@
     var compounds = years * compoundsPerYear;
 
     return start * Math.pow(growthRate, compounds);
+  }
+
+  function houseByPaymentHtml(monthlyPaymentTag, interestRateTag, termYearsTag, downpaymentTag, loanTag, totalTag)
+  {
+    var loanAmount = loanByPayment(
+      1.0 * document.getElementById(monthlyPaymentTag).value,
+      1.0 * document.getElementById(interestRateTag).value,
+      1.0 * document.getElementById(termYearsTag).value);
+    var downPaymentPercent = 5 / 100;
+    var downPayment = (loanAmount * downPaymentPercent) / (1 - downPaymentPercent);
+
+    document.getElementById(downpaymentTag).innerHTML = downPayment;
+    document.getElementById(loanTag).innerHTML = loanAmount;
+    document.getElementById(totalTag).innerHTML = loanAmount + downPayment;
   }
 
   function loanByPaymentHtml(monthlyPaymentTag, interestRateTag, termYearsTag, resultTag)
