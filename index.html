@@ -1,0 +1,61 @@
+<html>
+  <body>
+    <form>
+      <h1>Future Value</h1>
+      <table>
+        <tr><td>Initial Amount</td><td><input type="text" id="initialAmount"></td></tr>
+        <tr><td>Interest Per Year</td><td><input type="text" id="amountPerYear"></td></tr>
+        <tr><td>Compounds Per Year</td><td><input type="text" id="compoundsPerYear"></td></tr>
+        <tr><td>Years</td><td><input type="text" id="years"></td></tr>
+        <tr><td align="right" colspan="2">
+            <button type="button" onclick="growthRateHtml('initialAmount', 'amountPerYear', 'compoundsPerYear', 'years', 'futureValue');">Compute</button></td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>Future Value</td><td><span id="futureValue"></span></td></tr>
+      </table>
+      <h1>How much loan given payment</h1>
+      <table>
+        <tr><td>Monthly Payment</td><td><input type="text" id="monthlyPayment"></td></tr>
+        <tr><td>Interest Per Year</td><td><input type="text" id="loanInterestPerYear"></td></tr>
+        <tr><td>Loan Term Years</td><td><input type="text" id="loanTermYears"></td></tr>
+        <tr><td align="right" colspan="2">
+          <button type="button" onclick="loanByPaymentHtml('monthlyPayment', 'loanInterestPerYear', 'loanTermYears', 'loanValue');">Compute</button></td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>Loan Value</td><td><span id="loanValue"></span></td></tr>
+      </table>
+    </form>
+  </body>
+<script>
+  function growthRateHtml(startTag, amountPerYearTag, compoundsPerYearTag, yearsTag, resultTag)
+  {
+    document.getElementById(resultTag).innerHTML = growthRate(
+      1.0 * document.getElementById(startTag).value,
+      1.0 * document.getElementById(amountPerYearTag).value,
+      1.0 * document.getElementById(compoundsPerYearTag).value,
+      1.0 * document.getElementById(yearsTag).value);
+  }
+
+  function growthRate(start, amountPerYear, compoundsPerYear, years)
+  {
+    var growthRate = 1 + (amountPerYear / 100.0 / compoundsPerYear);
+    var compounds = years * compoundsPerYear;
+
+    return start * Math.pow(growthRate, compounds);
+  }
+
+  function loanByPaymentHtml(monthlyPaymentTag, interestRateTag, termYearsTag, resultTag)
+  {
+    document.getElementById(resultTag).innerHTML = loanByPayment(
+      1.0 * document.getElementById(monthlyPaymentTag).value,
+      1.0 * document.getElementById(interestRateTag).value,
+      1.0 * document.getElementById(termYearsTag).value);
+  }
+
+  function loanByPayment(monthlyPayment, interestRate, termYears)
+  {
+    var rate = interestRate / 100.0 / 12.0;
+
+    return monthlyPayment * (1 - Math.pow(1 + rate, -(12 * termYears))) / rate;
+  }
+</script>
+</html>
+
