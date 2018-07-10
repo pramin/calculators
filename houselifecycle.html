@@ -1,0 +1,100 @@
+<html>
+  <body>
+    <form href="">
+      <h1>How much loan given payment</h1>
+      <table>
+        <tr><td>Monthly Payment</td><td><input type="text" id="monthlyPayment" value="1885"></td></tr>
+        <tr><td>Interest Per Year</td><td><input type="text" id="loanInterestPerYear" value="3.7"></td></tr>
+        <tr><td>Loan Term Years</td><td><input type="text" id="loanTermYears" value="30"></td></tr>
+        <tr><td>Percent Down</td><td><input type="text" id="percentDown" value="5"></td></tr>
+        <tr><td>Total Down</td><td><input type="text" id="totalDown" value="0"></td></tr>
+        <tr><td>Property Tax Rate</td><td><input type="text" id="taxRate" value="1.02"></td></tr>
+        <tr><td>Growth Rate</td><td><input type="text" id="growthRate" value="15"></td></tr>
+        <tr><td>Time to Keep (years)</td><td><input type="text" id="timeToKeep" value="4"></td></tr>
+        <tr><td>Selling Commission</td><td><input type="text" id="commission" value="3"></td></tr>
+        <tr><td align="right" colspan="2">
+          <button type="button" onclick="houseByPaymentHtml('monthlyPayment', 'loanInterestPerYear', 'loanTermYears', 'percentDown', 'totalDown', 'taxRate', 'downPaymentValue', 'loanValue', 'houseValue', 'taxValue');">Compute</button></td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>Total House</td><td><span id="houseValue"></span></td></tr>
+        <tr><td>Tax per Year</td><td><span id="taxValue"></span></td></tr>
+        <tr><td>Loan Value</td><td><span id="loanValue"></span></td></tr>
+        <tr><td>Down payment </td><td><span id="downPaymentValue"></span></td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>Projected Value</td><td><span id="projectedValue"></span></td></tr>
+        <tr><td>Projected Gain per year</td><td><span id="projectedGain"></span></td></tr>
+        <tr><td>Projected Return per year</td><td><span id="projectedReturn"></span></td></tr>
+        <tr><td>Projected ROI per year</td><td><span id="projectedROI"></span>%</td></tr>
+        <tr><td>Invested per year</td><td><span id="investedValue"></span></td></tr>
+      </table>
+    </form>
+  </body>
+<script>
+  // Create our number formatter.
+  var formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    // the default value for minimumFractionDigits depends on the currency
+    // and is usually already 2
+  });
+
+  function houseByPaymentHtml(monthlyPaymentTag, interestRateTag, termYearsTag, downPaymentPercentTag, totalDownTag, taxRateTag, downpaymentTag, loanTag, totalTag, taxValueTag)
+  {
+    var monthlyPayment = 1.0 * document.getElementById(monthlyPaymentTag).value;
+    var interestRate = document.getElementById(interestRateTag).value / 100.0;
+    var termYears = 1.0 * document.getElementById(termYearsTag).value;
+    var taxRate = document.getElementById(taxRateTag).value / 100.0;
+    var totalDown = 1.0 * document.getElementById(totalDownTag).value;
+    var downPaymentPercent = document.getElementById(downPaymentPercentTag).value / 100.0;
+    var growthRate = document.getElementById("growthRate").value / 100.0;
+    var commission = document.getElementById("commission").value / 100.0;
+    var timeToKeep = document.getElementById("timeToKeep").value * 1.0;
+   
+    var rate = interestRate / 12.0;
+    var compounding = (1 - Math.pow(1 + rate, -(12 * termYears))) / rate;
+    var totalHouse = 0;
+
+    var totalHouse = (totalDown + (monthlyPayment * compounding)) / (1 + taxRate * compounding / 12);
+    if (totalDown < downPaymentPercent * totalHouse)
+    {
+      totalHouse = monthlyPayment * compounding / (1 + taxRate * compounding / 12 - downPaymentPercent);
+      totalDown = downPaymentPercent * totalHouse;
+    }
+
+    var years = timeToKeep;
+    var months = years * 12;
+    var loanAmount = totalHouse - totalDown;
+    var taxValue = taxRate * totalHouse;
+    var investmentValue = (1 + years * growthRate) * totalHouse * (1-commission);
+    var investedValue = months * monthlyPayment + totalDown;
+    var profit = investmentValue - totalHouse;
+    var ret = profit - investedValue;
+    var roi = (ret) / investedValue * 100;    
+
+    document.getElementById(downpaymentTag).innerHTML = formatter.format(totalDown);
+    document.getElementById(loanTag).innerHTML = formatter.format(loanAmount);
+    document.getElementById(totalTag).innerHTML = formatter.format(totalHouse);
+    document.getElementById(taxValueTag).innerHTML = formatter.format(taxValue);
+    document.getElementById("projectedValue").innerHTML = formatter.format(investmentValue);
+    document.getElementById("projectedGain").innerHTML = formatter.format(profit/timeToKeep);
+    document.getElementById("projectedReturn").innerHTML = formatter.format(ret/timeToKeep);
+    document.getElementById("projectedROI").innerHTML = (roi/timeToKeep).toFixed(2);
+    document.getElementById("investedValue").innerHTML = formatter.format(investedValue/timeToKeep);
+  }
+
+  function annualPMI(loan, total, credit)
+  {
+     var ltv = loan / total;
+     if (ltv > 0.95) { if (credit > 760) return 0.0105; if (credit > 720) return 0.0110; if (credit > 680) return 0.0131; return 0.0148; } 
+     if (ltv > 0.90) { if (credit > 760) return 0.0054; if (credit > 720) return 0.0062; if (credit > 680) return 0.0089; return 0.00115; } 
+     if (ltv > 0.85) { if (credit > 760) return 0.0039; if (credit > 720) return 0.0044; if (credit > 680) return 0.0057; return 0.0071; } 
+     if (ltv > 0.80) { if (credit > 760) return 0.0023; if (credit > 720) return 0.0027; if (credit > 680) return 0.0033; return 0.0039; } 
+     return 0.0;
+  }
+
+  function annualHomeOwnersInsurance(total)
+  {
+     return 0.005 * total;
+  }
+</script>
+</html>
